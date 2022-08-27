@@ -1,5 +1,6 @@
 package fr.cdudit.composescanner.components
 
+import android.graphics.BitmapFactory
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -12,16 +13,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import fr.cdudit.composescanner.R
-import fr.cdudit.composescanner.models.File
 import fr.cdudit.composescanner.utils.DateUtils
+import java.io.File
+import java.util.*
+
 
 @Composable
-fun Files(files: List<File>) {
+fun Files(files: MutableList<File>) {
     LazyColumn {
         items(files) {
             FileRow(it)
@@ -43,9 +44,11 @@ fun FileRow(file: File) {
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Thumbnail()
+            Thumbnail(file)
             Column(
-                modifier = Modifier.padding(horizontal = 8.dp)
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+                    .weight(1f)
             ) {
                 Text(
                     modifier = Modifier.padding(bottom = 4.dp),
@@ -53,7 +56,7 @@ fun FileRow(file: File) {
                     fontSize = 18.sp
                 )
                 Text(
-                    text = DateUtils.formatDate(file.date, "dd MMMM Y"),
+                    text = DateUtils.formatDate(Date(file.lastModified()), "dd MMMM Y"),
                     fontSize = 14.sp
                 )
             }
@@ -62,7 +65,11 @@ fun FileRow(file: File) {
 }
 
 @Composable
-fun Thumbnail() {
-    val image: Painter = painterResource(id = R.drawable.sample)
-    Image(painter = image, contentDescription = "Thumbnail")
+fun Thumbnail(file: File, modifier: Modifier = Modifier) {
+    val bitmap = BitmapFactory.decodeFile(file.path).asImageBitmap()
+    Image(
+        modifier = modifier,
+        bitmap = bitmap,
+        contentDescription = "Thumbnail"
+    )
 }
