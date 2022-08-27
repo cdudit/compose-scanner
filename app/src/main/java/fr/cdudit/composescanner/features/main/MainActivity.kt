@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.cdudit.composescanner.R
+import fr.cdudit.composescanner.components.Files
 import fr.cdudit.composescanner.models.File
 import fr.cdudit.composescanner.models.sampleData
 import fr.cdudit.composescanner.ui.theme.ComposeScannerTheme
@@ -48,7 +49,7 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)
                         ) {
                             Title()
-                            Files()
+                            Files(viewModel.getFiles())
                         }
                     }
                 }
@@ -73,53 +74,6 @@ class MainActivity : ComponentActivity() {
             backgroundColor = MaterialTheme.colors.primary
         ) {
             Icon(Icons.Default.Add, "")
-        }
-    }
-
-    @Composable
-    fun FileRow(file: File) {
-        Card(
-            border = BorderStroke(1.dp, Color.Black),
-            shape = RoundedCornerShape(22.dp),
-            modifier = Modifier
-                .padding(bottom = 16.dp)
-                .height(80.dp)
-                .fillMaxWidth(),
-            elevation = 0.dp
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Thumbnail()
-                Column(
-                    modifier = Modifier.padding(horizontal = 8.dp)
-                ) {
-                    Text(
-                        modifier = Modifier.padding(bottom = 4.dp),
-                        text = file.name,
-                        fontSize = 18.sp
-                    )
-                    Text(
-                        text = viewModel.formatDate(file.date),
-                        fontSize = 14.sp
-                    )
-                }
-            }
-        }
-    }
-    
-    @Composable
-    fun Thumbnail() {
-        val image: Painter = painterResource(id = R.drawable.sample)
-        Image(painter = image, contentDescription = "Thumbnail")
-    }
-
-    @Composable
-    fun Files() {
-        LazyColumn {
-            items(viewModel.getFiles()) {
-                FileRow(it)
-            }
         }
     }
 }

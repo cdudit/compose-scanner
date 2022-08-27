@@ -10,8 +10,4 @@ class MainViewModel: ViewModel() {
     fun getFiles(): MutableList<File> {
         return sampleData
     }
-
-    fun formatDate(date: Date): String {
-        return SimpleDateFormat("dd MMMM Y", Locale.FRANCE).format(date.time)
-    }
 }
