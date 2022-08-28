@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <files-path
+        name="scanner-images"
+        path="images/" />
+    <cache-path
+        name="scanner-images"
+        path="images/" />
+    <external-path
+        name="external_files"
+        path="images/"/>
+</paths>
