@@ -1,6 +1,7 @@
 package fr.cdudit.composescanner.utils
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
@@ -25,5 +26,17 @@ object FileUtils {
             authority,
             file,
         )
+    }
+
+    fun shareFile(context: Context, file: File) {
+        val uri = FileProvider.getUriForFile(context, Constants.PROVIDER_AUTHORITY , file)
+        val sendIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_STREAM, uri)
+            type = Constants.MIME_TYPE_JPEG
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        val shareIntent = Intent.createChooser(sendIntent, file.name)
+        context.startActivity(shareIntent)
     }
 }

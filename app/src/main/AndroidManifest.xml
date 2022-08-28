@@ -4,6 +4,7 @@
     package="fr.cdudit.composescanner">
 
     <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name=".KoinApplication"
@@ -28,7 +29,6 @@
         <activity
             android:name=".features.main.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.ComposeScanner">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

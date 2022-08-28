@@ -1,5 +1,6 @@
 package fr.cdudit.composescanner.components
 
+import android.Manifest
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -11,7 +12,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun Permission(
-    permission: String = android.Manifest.permission.CAMERA,
+    permission: String = Manifest.permission.CAMERA,
     rationale: String = "This permission is important for this app. Please grant the permission.",
     permissionNotAvailableContent: @Composable () -> Unit = { },
     content: @Composable () -> Unit = { }
