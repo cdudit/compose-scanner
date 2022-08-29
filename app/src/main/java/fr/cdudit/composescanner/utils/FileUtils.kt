@@ -4,13 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.ImageDecoder
-import android.media.MediaMetadataRetriever
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
 import androidx.core.content.FileProvider
-import androidx.core.net.toUri
 import java.io.File
 
 object FileUtils {
@@ -42,11 +39,19 @@ object FileUtils {
         context.startActivity(shareIntent)
     }
 
-    fun File.isInPortrait(): Boolean {
-        val options = BitmapFactory.Options().apply {
-            inJustDecodeBounds = true
+    fun File.getBitmap(): Bitmap {
+        val exif = ExifInterface(this)
+        val degree = when (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> 90f
+            ExifInterface.ORIENTATION_ROTATE_180 -> 180f
+            ExifInterface.ORIENTATION_ROTATE_270 -> 270f
+            ExifInterface.ORIENTATION_NORMAL -> 0f
+            else -> 0f
         }
-        BitmapFactory.decodeFile(this.path, options)
-        return options.outHeight > options.outWidth
+        val bitmap = BitmapFactory.decodeFile(this.path)
+        val matrix = Matrix().apply {
+            postRotate(degree)
+        }
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
     }
 }
