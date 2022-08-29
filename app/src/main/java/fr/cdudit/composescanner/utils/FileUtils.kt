@@ -3,7 +3,9 @@ package fr.cdudit.composescanner.utils
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
@@ -28,15 +30,23 @@ object FileUtils {
         )
     }
 
-    fun shareFile(context: Context, file: File) {
-        val uri = FileProvider.getUriForFile(context, Constants.PROVIDER_AUTHORITY , file)
+    fun File.share(context: Context) {
+        val uri = FileProvider.getUriForFile(context, Constants.PROVIDER_AUTHORITY, this)
         val sendIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_STREAM, uri)
             type = Constants.MIME_TYPE_JPEG
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
-        val shareIntent = Intent.createChooser(sendIntent, file.name)
+        val shareIntent = Intent.createChooser(sendIntent, this.name)
         context.startActivity(shareIntent)
+    }
+
+    fun File.isInPortrait(): Boolean {
+        val options = BitmapFactory.Options().apply {
+            inJustDecodeBounds = true
+        }
+        BitmapFactory.decodeFile(this.path, options)
+        return options.outHeight > options.outWidth
     }
 }

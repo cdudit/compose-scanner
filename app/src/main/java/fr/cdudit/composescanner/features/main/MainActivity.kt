@@ -19,6 +19,7 @@ import fr.cdudit.composescanner.components.Permission
 import fr.cdudit.composescanner.ui.theme.ComposeScannerTheme
 import fr.cdudit.composescanner.utils.FileUtils
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.io.File
 
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModel()
@@ -29,18 +30,14 @@ class MainActivity : ComponentActivity() {
             ComposeScannerTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
-                    floatingActionButton = { FloatingActionButton() }
+                    floatingActionButton = { FloatingActionButton() },
+                    backgroundColor = MaterialTheme.colors.background
                 ) {
-                    Surface(
-                        modifier = Modifier.fillMaxSize(),
-                        color = MaterialTheme.colors.background
+                    Column(
+                        modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)
                     ) {
-                        Column(
-                            modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)
-                        ) {
-                            Title()
-                            Files(viewModel.files)
-                        }
+                        Title()
+                        Files(viewModel.files)
                     }
                 }
             }
@@ -49,7 +46,12 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.refreshFiles(applicationContext)
+        viewModel.setupObserver(applicationContext)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.removeObserver()
     }
 
     @Composable
@@ -64,13 +66,12 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun FloatingActionButton() {
-        val context = LocalContext.current
+        val context = applicationContext
         val cameraLauncher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.TakePicture(),
-            onResult = { success ->
-                viewModel.hasImage = success
-                if (viewModel.hasImage && viewModel.imageUri !== null) {
-                    viewModel.refreshFiles(context)
+            onResult = {
+                if (!it && viewModel.imageUri != null && viewModel.imageUri?.lastPathSegment != null) {
+                    File(cacheDir, "images/${viewModel.imageUri?.lastPathSegment}").delete()
                 }
             }
         )
