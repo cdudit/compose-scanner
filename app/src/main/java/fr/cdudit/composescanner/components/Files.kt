@@ -1,10 +1,6 @@
 package fr.cdudit.composescanner.components
 
 import android.Manifest
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Matrix
-import android.media.ExifInterface
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,6 +20,8 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
+import androidx.navigation.NavController
 import fr.cdudit.composescanner.utils.DateUtils
 import fr.cdudit.composescanner.utils.FileUtils.getBitmap
 import fr.cdudit.composescanner.utils.FileUtils.share
@@ -31,17 +29,17 @@ import java.io.File
 import java.util.*
 
 @Composable
-fun Files(files: MutableList<File>) {
+fun Files(navController: NavController, files: MutableList<File>) {
     LazyColumn {
         items(files) {
-            FileRow(it)
+            FileRow(navController, it)
         }
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun FileRow(file: File) {
+fun FileRow(navController: NavController, file: File) {
     val context = LocalContext.current
     val openDialog = remember { mutableStateOf(false) }
     Permission(permission = Manifest.permission.READ_EXTERNAL_STORAGE) {
@@ -67,7 +65,7 @@ fun FileRow(file: File) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.combinedClickable(
-                        onClick = { file.share(context) },
+                        onClick = { navController.navigate("file/${file.name}") },
                         onLongClick = { openDialog.value = true }
                     )
                 ) {
